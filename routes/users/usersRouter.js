@@ -4,6 +4,7 @@ const {
   login,
   getProfile,
 } = require("../../controllers/users/usersCtrl");
+const isLoggin = require("../../middlewares/isLoggin");
 
 const usersRouter = express.Router();
 
@@ -12,6 +13,6 @@ usersRouter.post("/register", register);
 // login
 usersRouter.post("/login", login);
 // profile
-usersRouter.get("/profile/:id", getProfile);
+usersRouter.get("/profile/:id", isLoggin, getProfile);
 
 module.exports = usersRouter;

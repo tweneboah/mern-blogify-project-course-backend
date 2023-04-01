@@ -84,6 +84,7 @@ exports.login = async (req, res) => {
 //@access Private
 
 exports.getProfile = async (req, res) => {
+  console.log(req.userAuth);
   try {
     res.json({
       status: "success",
