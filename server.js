@@ -9,7 +9,7 @@ const app = express();
 //middlewares
 app.use(express.json()); //Pass incoming data
 // Routes
-app.use("/", usersRouter);
+app.use("/api/v1/users", usersRouter);
 
 const server = http.createServer(app);
 //? Start the server

@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const User = require("../../model/User/User");
-
+const generateToken = require("../../utils/generateToken");
 //@desc Register a new user
 //@route POST /api/v1/users/register
 //@access public
@@ -65,7 +65,30 @@ exports.login = async (req, res) => {
     user.lastLogin = new Date();
     res.json({
       status: "success",
-      user,
+      email: user?.email,
+      _id: user?._id,
+      username: user?.username,
+      role: user?.role,
+      token: generateToken(user),
+    });
+  } catch (error) {
+    res.json({
+      status: "failed",
+      message: error?.message,
+    });
+  }
+};
+
+//@desc Get profile
+//@route POST /api/v1/users/profile/:id
+//@access Private
+
+exports.getProfile = async (req, res) => {
+  try {
+    res.json({
+      status: "success",
+      message: "Profile fetched",
+      data: "user data",
     });
   } catch (error) {
     res.json({
