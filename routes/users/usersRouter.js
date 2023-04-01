@@ -13,6 +13,6 @@ usersRouter.post("/register", register);
 // login
 usersRouter.post("/login", login);
 // profile
-usersRouter.get("/profile/:id", isLoggin, getProfile);
+usersRouter.get("/profile/", isLoggin, getProfile);
 
 module.exports = usersRouter;

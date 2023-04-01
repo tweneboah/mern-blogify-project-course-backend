@@ -84,12 +84,14 @@ exports.login = async (req, res) => {
 //@access Private
 
 exports.getProfile = async (req, res) => {
-  console.log(req.userAuth);
   try {
+    //! get user id from params
+    const id = req.userAuth._id;
+    const user = await User.findById(id);
     res.json({
       status: "success",
       message: "Profile fetched",
-      data: "user data",
+      user,
     });
   } catch (error) {
     res.json({
