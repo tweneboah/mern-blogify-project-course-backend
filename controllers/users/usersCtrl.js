@@ -42,3 +42,35 @@ exports.register = async (req, res) => {
     });
   }
 };
+
+//@desc Login  user
+//@route POST /api/v1/users/login
+//@access public
+
+exports.login = async (req, res) => {
+  try {
+    //? get the login details
+    const { username, password } = req.body;
+    //! Check if exists
+    const user = await User.findOne({ username });
+    if (!user) {
+      throw new Error("Invalid login credentials");
+    }
+    //compare the hashed password with the one the request
+    const isMatched = await bcrypt.compare(password, user?.password);
+    if (!isMatched) {
+      throw new Error("Invalid login credentials");
+    }
+    //Update the last login
+    user.lastLogin = new Date();
+    res.json({
+      status: "success",
+      user,
+    });
+  } catch (error) {
+    res.json({
+      status: "failed",
+      message: error?.message,
+    });
+  }
+};
