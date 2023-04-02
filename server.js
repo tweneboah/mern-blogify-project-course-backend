@@ -1,3 +1,5 @@
+const dotenv = require("dotenv");
+dotenv.config();
 const http = require("http");
 const express = require("express");
 const usersRouter = require("./routes/users/usersRouter");
@@ -6,16 +8,19 @@ const {
   globalErrHandler,
 } = require("./middlewares/globalErrorHandler");
 const categoryRouter = require("./routes/category/categoryRouter");
+const postsRouter = require("./routes/post/postRouter");
 require("./config/database")();
 
 //!Server
 const app = express();
-
+console.log(process.env.MYKEY);
 //middlewares
 app.use(express.json()); //Pass incoming data
 // Routes
 app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/categories", categoryRouter);
+app.use("/api/v1/posts", postsRouter);
+
 //? Not Found middleware
 app.use(notFound);
 //! Error middleware
