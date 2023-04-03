@@ -52,7 +52,7 @@ exports.createPost = asyncHandler(async (req, res) => {
 
 //@desc  Get all posts
 //@route GET /api/v1/posts
-//@access PUBLIC
+//@access Private
 
 exports.getPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find({});
@@ -100,5 +100,18 @@ exports.updatePost = asyncHandler(async (req, res) => {
     status: "success",
     message: "post successfully updated",
     post,
+  });
+});
+
+//@desc  Get only 4 posts
+//@route GET /api/v1/posts
+//@access PUBLIC
+
+exports.getPublicPosts = asyncHandler(async (req, res) => {
+  const posts = await Post.find({}).sort({ createdAt: -1 }).limit(4);
+  res.status(201).json({
+    status: "success",
+    message: "Posts successfully fetched",
+    posts,
   });
 });

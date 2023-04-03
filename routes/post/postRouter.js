@@ -5,6 +5,7 @@ const {
   getPosts,
   updatePost,
   deletePost,
+  getPublicPosts,
 } = require("../../controllers/posts/posts");
 
 const isLoggin = require("../../middlewares/isLoggin");
@@ -14,7 +15,9 @@ const postsRouter = express.Router();
 //create
 postsRouter.post("/", isLoggin, createPost);
 //getting all
-postsRouter.get("/", getPosts);
+postsRouter.get("/", isLoggin, getPosts);
+//get only 4 posts
+postsRouter.get("/public", getPublicPosts);
 //single
 postsRouter.get("/:id", getPost);
 //update
