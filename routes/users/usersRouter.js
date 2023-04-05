@@ -3,6 +3,8 @@ const {
   register,
   login,
   getProfile,
+  blockUser,
+  unblockUser,
 } = require("../../controllers/users/usersCtrl");
 const isLoggin = require("../../middlewares/isLoggin");
 
@@ -14,5 +16,9 @@ usersRouter.post("/register", register);
 usersRouter.post("/login", login);
 // profile
 usersRouter.get("/profile/", isLoggin, getProfile);
+// block user
+usersRouter.put("/block/:userIdToBlock", isLoggin, blockUser);
+// ublock user
+usersRouter.put("/unblock/:userIdToUnBlock", isLoggin, unblockUser);
 
 module.exports = usersRouter;
