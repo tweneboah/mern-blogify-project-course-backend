@@ -1,7 +1,6 @@
 const nodemailer = require("nodemailer");
 
 //! create the function
-
 exports.sendEmail = async (to, resetToken) => {
   try {
     //Create transport

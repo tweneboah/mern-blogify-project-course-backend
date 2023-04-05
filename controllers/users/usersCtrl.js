@@ -1,8 +1,8 @@
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
-const { bulkSave } = require("../../model/User/User");
 const User = require("../../model/User/User");
 const generateToken = require("../../utils/generateToken");
+const { sendEmail } = require("../../utils/sendEmail");
 //@desc Register a new user
 //@route POST /api/v1/users/register
 //@access public
@@ -252,3 +252,31 @@ exports.unFollowingUser = asyncHandler(async (req, res) => {
     message: "You have unfollowed the user successfully",
   });
 });
+
+//@desc   Forgot password (send token to user email)
+//@route  PUT /api/v1/users/forgot-password
+//@access Public
+
+exports.forgotPassword = asyncHandler(async (req, res) => {
+  //get user email
+  const { email } = req.body;
+  //! find the user
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new Error("There's No Email In Our System");
+  }
+  //Generate the token
+  const token = await user.generatePasswordResetToken();
+  console.log(token);
+  //resave the user
+  await user.save();
+
+  //send the email
+  sendEmail("e.tweneboah1@gmail.com", token);
+  res.json({
+    status: "success",
+    message: "Password reset email sent",
+  });
+});
+
+//Password reset
