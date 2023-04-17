@@ -1,35 +1,37 @@
 const nodemailer = require("nodemailer");
+require("dotenv").config();
+//create function to sendt email
 
-//! create the function
-exports.sendEmail = async (to, resetToken) => {
+const sendEmail = async (to, resetToken) => {
   try {
-    //Create transport
-    const transport = nodemailer.createTransport({
+    //create transport
+    const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
       secure: false,
       auth: {
-        user: "nodejsguy2022@gmail.com",
-        pass: "cqlnxvzibxspbpsu",
+        user: process.env.GMAIL_USER, //user email address,
+        pass: process.env.GMAIL_PASS,
       },
     });
-    // ? Create the message
+    //create msg
     const message = {
       to,
-      subject: "Password",
+      subject: "Password reset",
       html: `
-              <p>You are receiving this email because you (or someone else) have requested the reset of a password.</p>
-              <p>Please click on the following link, or paste this into your browser to complete the process:</p>
-              <p>http://localhost:3000/reset-password/${resetToken}</p>
-              <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
-             
-            `,
+        <p>You are receiving this email because you (or someone else) have requested the reset of a password.</p>
+        <p>Please click on the following link, or paste this into your browser to complete the process:</p>
+        <p>http://localhost:3000/reset-password/${resetToken}</p>
+        <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
+        `,
     };
-    //Send thr email
-    const info = await transport.sendMail(message);
-    console.log("Message sent", info.messageId);
+    //send the email
+    const info = await transporter.sendMail(message);
+    console.log("Email sent", info.messageId);
   } catch (error) {
     console.log(error);
-    throw new Error("Email could not be sent");
+    throw new Error("Email sending failed");
   }
 };
+
+module.exports = sendEmail;

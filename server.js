@@ -10,8 +10,9 @@ const {
 const categoryRouter = require("./routes/category/categoryRouter");
 const postsRouter = require("./routes/post/postRouter");
 const commentRouter = require("./routes/comment/commentRouter");
-const { sendEmail } = require("./utils/sendEmail");
+const sendEmail = require("./utils/sendEmail");
 require("./config/database")();
+//sendEmail("inovodev@gmail.com", "Some message");
 //!Server
 const app = express();
 console.log(process.env.MYKEY);
