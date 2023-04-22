@@ -8,9 +8,10 @@ const {
   profileViewers,
   followingUser,
   unFollowingUser,
-  forgotPassword,
   resetPassword,
   forgotpassword,
+  accountVerificationEmail,
+  verifyAccount,
 } = require("../../controllers/users/usersCtrl");
 const isLoggin = require("../../middlewares/isLoggin");
 
@@ -26,8 +27,18 @@ usersRouter.get("/profile/", isLoggin, getProfile);
 usersRouter.put("/block/:userIdToBlock", isLoggin, blockUser);
 // ublock user
 usersRouter.put("/unblock/:userIdToUnBlock", isLoggin, unblockUser);
-// ublock user
+// unblock user
 usersRouter.get("/profile-viewer/:userProfileId", isLoggin, profileViewers);
+
+// send account verification email
+usersRouter.put(
+  "/account-verification-email",
+  isLoggin,
+  accountVerificationEmail
+);
+
+// send account verification email
+usersRouter.put("/account-verification/:verifyToken", isLoggin, verifyAccount);
 
 // forgot password user
 usersRouter.post("/forgot-password", forgotpassword);
