@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const Category = require("../../model/Category/Category");
 const Post = require("../../model/Post/Post");
 const User = require("../../model/User/User");
+const expressAsyncHandler = require("express-async-handler");
 //@desc  Create a post
 //@route POST /api/v1/posts
 //@access Private
@@ -114,4 +115,34 @@ exports.getPublicPosts = asyncHandler(async (req, res) => {
     message: "Posts successfully fetched",
     posts,
   });
+});
+
+//@desc   liking a Post
+//@route  PUT /api/v1/posts/likes/:id
+//@access Private
+
+exports.likePost = expressAsyncHandler(async (req, res) => {
+  //Get the id of the post
+  const { id } = req.params;
+  //get the login user
+  const userId = req.userAuth._id;
+  //Find the post
+  const post = await Post.findById(id);
+  if (!post) {
+    throw new Error("Post not found");
+  }
+  //Push thr user into post likes
+
+  await Post.findByIdAndUpdate(
+    id,
+    {
+      $addToSet: { likes: userId },
+    },
+    { new: true }
+  );
+  // Remove the user from the dislikes array if present
+  post.dislikes = post.dislikes.filter(
+    (dislike) => dislike.toString() !== userId.toString()
+  );
+  res.status(200).json({ message: "Post liked successfully.", post });
 });
