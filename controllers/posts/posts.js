@@ -14,8 +14,8 @@ exports.createPost = asyncHandler(async (req, res) => {
   if (postFound) {
     throw new Error("Post aleady exists");
   }
+  //Check if user account is verified
 
-  //Create post
   const post = await Post.create({
     title,
     content,
