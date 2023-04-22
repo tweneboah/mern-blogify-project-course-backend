@@ -14,6 +14,7 @@ exports.createPost = asyncHandler(async (req, res) => {
   if (postFound) {
     throw new Error("Post aleady exists");
   }
+
   //Create post
   const post = await Post.create({
     title,
