@@ -6,6 +6,10 @@ const {
   updatePost,
   deletePost,
   getPublicPosts,
+  likePost,
+  disLikePost,
+  claps,
+  schedule,
 } = require("../../controllers/posts/posts");
 
 const isLoggin = require("../../middlewares/isLoggin");
@@ -18,6 +22,14 @@ postsRouter.post("/", isLoggin, createPost);
 postsRouter.get("/", isLoggin, getPosts);
 //get only 4 posts
 postsRouter.get("/public", getPublicPosts);
+//like post
+postsRouter.put("/likes/:id", isLoggin, likePost);
+//schedule post
+postsRouter.put("/schedule/:postId", isLoggin, schedule);
+//dislike post
+postsRouter.put("/dislikes/:id", isLoggin, disLikePost);
+//clap a post
+postsRouter.put("/claps/:id", isLoggin, claps);
 //single
 postsRouter.get("/:id", getPost);
 //update
