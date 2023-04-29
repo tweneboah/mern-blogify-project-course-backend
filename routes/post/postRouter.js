@@ -9,6 +9,7 @@ const {
   likePost,
   disLikePost,
   claps,
+  schedule,
 } = require("../../controllers/posts/posts");
 
 const isLoggin = require("../../middlewares/isLoggin");
@@ -23,6 +24,8 @@ postsRouter.get("/", isLoggin, getPosts);
 postsRouter.get("/public", getPublicPosts);
 //like post
 postsRouter.put("/likes/:id", isLoggin, likePost);
+//schedule post
+postsRouter.put("/schedule/:postId", isLoggin, schedule);
 //dislike post
 postsRouter.put("/dislikes/:id", isLoggin, disLikePost);
 //clap a post
