@@ -56,7 +56,18 @@ exports.createPost = asyncHandler(async (req, res) => {
 //@access Private
 
 exports.getPosts = asyncHandler(async (req, res) => {
-  const posts = await Post.find({});
+  // !find all users who have blocked the logged-in user
+  const loggedInUserId = req.userAuth?._id;
+  const usersBlockingLoggedInuser = await User.find({
+    blockedUsers: loggedInUserId,
+  });
+  // Extract the IDs of users who have blocked the logged-in user
+  const blockingUsersIds = usersBlockingLoggedInuser?.map((user) => user?._id);
+
+  const posts = await Post.find({
+    author: { $nin: blockingUsersIds },
+  });
+
   res.status(201).json({
     status: "success",
     message: "Posts successfully fetched",
@@ -225,7 +236,7 @@ exports.schedule = expressAsyncHandler(async (req, res) => {
   }
   //check if tjhe user is the author of the post
   if (post.author.toString() !== req.userAuth._id.toString()) {
-    throw new Error("You can schedule your own post ");
+    throw new Error("You can schedulle your own post ");
   }
   // Check if the scheduledPublish date is in the past
   const scheduleDate = new Date(scheduledPublish);
@@ -234,7 +245,7 @@ exports.schedule = expressAsyncHandler(async (req, res) => {
     throw new Error("The scheduled publish date cannot be in the past.");
   }
   //update the post
-  post.shedduledPublished = scheduleDate;
+  post.shedduledPublished = scheduledPublish;
   await post.save();
   res.json({
     status: "success",
