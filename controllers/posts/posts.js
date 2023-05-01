@@ -15,6 +15,7 @@ exports.createPost = asyncHandler(async (req, res) => {
   if (postFound) {
     throw new Error("Post aleady exists");
   }
+
   //Create post
   const post = await Post.create({
     title,
@@ -56,27 +57,6 @@ exports.createPost = asyncHandler(async (req, res) => {
 //@access Private
 
 exports.getPosts = asyncHandler(async (req, res) => {
-  // !find all users who have blocked the logged-in user
-  const loggedInUserId = req.userAuth?._id;
-  //get current time
-  const currentTime = new Date();
-  const usersBlockingLoggedInuser = await User.find({
-    blockedUsers: loggedInUserId,
-  });
-  // Extract the IDs of users who have blocked the logged-in user
-  const blockingUsersIds = usersBlockingLoggedInuser?.map((user) => user?._id);
-
-  //query
-  const query = {
-    author: { $nin: blockingUsersIds },
-    $or: [
-      {
-        shedduledPublished: { $lte: currentTime },
-        shedduledPublished: null,
-      },
-    ],
-  };
-  const posts = await Post.find(query);
   res.status(201).json({
     status: "success",
     message: "Posts successfully fetched",
