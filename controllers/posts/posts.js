@@ -241,7 +241,7 @@ exports.schedule = expressAsyncHandler(async (req, res) => {
   //Find the post
   const post = await Post.findById(postId);
   if (!post) {
-    throw new Error("Post not found");
+    throw new Error("Post not found...");
   }
   //check if tjhe user is the author of the post
   if (post.author.toString() !== req.userAuth._id.toString()) {
