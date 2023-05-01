@@ -9,7 +9,7 @@ const postSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      default: "",
+      required: true,
     },
     claps: {
       type: Number,
@@ -64,6 +64,12 @@ const postSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: {
+      virtuals: true,
+    },
+    toObject: {
+      virtuals: true,
+    },
   }
 );
 

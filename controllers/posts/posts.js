@@ -15,13 +15,13 @@ exports.createPost = asyncHandler(async (req, res) => {
   if (postFound) {
     throw new Error("Post aleady exists");
   }
-
   //Create post
   const post = await Post.create({
     title,
     content,
     category: categoryId,
     author: req?.userAuth?._id,
+    image: req?.file?.path,
   });
   //!Associate post to user
   await User.findByIdAndUpdate(
@@ -57,6 +57,31 @@ exports.createPost = asyncHandler(async (req, res) => {
 //@access Private
 
 exports.getPosts = asyncHandler(async (req, res) => {
+  // !find all users who have blocked the logged-in user
+  const loggedInUserId = req.userAuth?._id;
+  //get current time
+  const currentTime = new Date();
+  const usersBlockingLoggedInuser = await User.find({
+    blockedUsers: loggedInUserId,
+  });
+  // Extract the IDs of users who have blocked the logged-in user
+  const blockingUsersIds = usersBlockingLoggedInuser?.map((user) => user?._id);
+
+  //query
+  const query = {
+    author: { $nin: blockingUsersIds },
+    $or: [
+      {
+        shedduledPublished: { $lte: currentTime },
+        shedduledPublished: null,
+      },
+    ],
+  };
+  const posts = await Post.find(query).populate({
+    path: "author",
+    model: "User",
+    select: "email role username",
+  });
   res.status(201).json({
     status: "success",
     message: "Posts successfully fetched",
@@ -221,7 +246,7 @@ exports.schedule = expressAsyncHandler(async (req, res) => {
   //Find the post
   const post = await Post.findById(postId);
   if (!post) {
-    throw new Error("Post not found");
+    throw new Error("Post not found...");
   }
   //check if tjhe user is the author of the post
   if (post.author.toString() !== req.userAuth._id.toString()) {
