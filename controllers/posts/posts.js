@@ -93,7 +93,9 @@ exports.getPosts = asyncHandler(async (req, res) => {
 //@route GET /api/v1/posts/:id
 //@access PUBLIC
 exports.getPost = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.id);
+  const post = await Post.findById(req.params.id)
+    .populate("author")
+    .populate("category");
   res.status(201).json({
     status: "success",
     message: "Post successfully fetched",
@@ -106,6 +108,15 @@ exports.getPost = asyncHandler(async (req, res) => {
 //@access Private
 
 exports.deletePost = asyncHandler(async (req, res) => {
+  //! Find the post
+  const postFound = await Post.findById(req.params.id);
+  const isAuthor =
+    req.userAuth?._id?.toString() === postFound?.author?._id?.toString();
+  console.log(isAuthor);
+
+  if (!isAuthor) {
+    throw new Error("Action denied, you are not the creator of this post");
+  }
   await Post.findByIdAndDelete(req.params.id);
   res.status(201).json({
     status: "success",
@@ -134,7 +145,10 @@ exports.updatePost = asyncHandler(async (req, res) => {
 //@access PUBLIC
 
 exports.getPublicPosts = asyncHandler(async (req, res) => {
-  const posts = await Post.find({}).sort({ createdAt: -1 }).limit(4);
+  const posts = await Post.find({})
+    .sort({ createdAt: -1 })
+    .limit(4)
+    .populate("category");
   res.status(201).json({
     status: "success",
     message: "Posts successfully fetched",
