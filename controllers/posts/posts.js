@@ -77,11 +77,13 @@ exports.getPosts = asyncHandler(async (req, res) => {
       },
     ],
   };
-  const posts = await Post.find(query).populate({
-    path: "author",
-    model: "User",
-    select: "email role username",
-  });
+  const posts = await Post.find(query)
+    .populate({
+      path: "author",
+      model: "User",
+      select: "email role username",
+    })
+    .populate("category");
   res.status(201).json({
     status: "success",
     message: "Posts successfully fetched",
@@ -129,10 +131,27 @@ exports.deletePost = asyncHandler(async (req, res) => {
 //@access Private
 
 exports.updatePost = asyncHandler(async (req, res) => {
-  const post = await Post.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  //!Check if the post exists
+  const { id } = req.params;
+  const postFound = await Post.findById(id);
+  if (!postFound) {
+    throw new Error("Post not found");
+  }
+  //! image update
+  const { title, category, content } = req.body;
+  const post = await Post.findByIdAndUpdate(
+    id,
+    {
+      image: req?.file?.path ? req?.file?.path : postFound?.image,
+      title: title ? title : postFound?.title,
+      category: category ? category : postFound?.category,
+      content: content ? content : postFound?.content,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
   res.status(201).json({
     status: "success",
     message: "post successfully updated",

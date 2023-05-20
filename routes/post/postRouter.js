@@ -38,7 +38,7 @@ postsRouter.put("/claps/:id", isLoggin, claps);
 //single
 postsRouter.get("/:id", getPost);
 //update
-postsRouter.put("/:id", isLoggin, updatePost);
+postsRouter.put("/:id", isLoggin, upload.single("file"), updatePost);
 //delete
 postsRouter.delete("/:id", isLoggin, deletePost);
 module.exports = postsRouter;
