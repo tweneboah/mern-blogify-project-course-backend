@@ -11,7 +11,7 @@ const {
   disLikePost,
   claps,
   schedule,
-  postViews,
+  postViewCount,
 } = require("../../controllers/posts/posts");
 
 const isLoggin = require("../../middlewares/isLoggin");
@@ -36,12 +36,13 @@ postsRouter.put("/schedule/:postId", isLoggin, schedule);
 postsRouter.put("/dislikes/:id", isLoggin, disLikePost);
 //clap a post
 postsRouter.put("/claps/:id", isLoggin, claps);
-//post view
-postsRouter.put("/:id/post-view", isLoggin, postViews);
+//update
+postsRouter.put("/:id/post-view-count", isLoggin, postViewCount);
 //single
 postsRouter.get("/:id", getPost);
 //update
 postsRouter.put("/:id", isLoggin, upload.single("file"), updatePost);
+
 //delete
 postsRouter.delete("/:id", isLoggin, deletePost);
 module.exports = postsRouter;

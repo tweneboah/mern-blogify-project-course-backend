@@ -239,7 +239,7 @@ exports.disLikePost = expressAsyncHandler(async (req, res) => {
   res.status(200).json({ message: "Post disliked successfully.", post });
 });
 
-//@desc   claping a Post
+//@desc   clapong a Post
 //@route  PUT /api/v1/posts/claps/:id
 //@access Private
 
@@ -256,31 +256,6 @@ exports.claps = expressAsyncHandler(async (req, res) => {
     id,
     {
       $inc: { claps: 1 },
-    },
-    {
-      new: true,
-    }
-  );
-  res.status(200).json({ message: "Post clapped successfully.", updatedPost });
-});
-
-//@desc   claping a Post
-//@route  PUT /api/v1/posts/claps/:id
-//@access Private
-
-exports.postViews = expressAsyncHandler(async (req, res) => {
-  //Get the id of the post
-  const { id } = req.params;
-  //Find the post
-  const post = await Post.findById(id);
-  if (!post) {
-    throw new Error("Post not found");
-  }
-  //implement the claps
-  const updatedPost = await Post.findByIdAndUpdate(
-    id,
-    {
-      $inc: { postViews: 1 },
     },
     {
       new: true,
@@ -324,4 +299,31 @@ exports.schedule = expressAsyncHandler(async (req, res) => {
     message: "Post scheduled successfully",
     post,
   });
+});
+
+//@desc   post  view counta
+//@route  PUT /api/v1/posts/:id/post-views-count
+//@access Private
+
+exports.postViewCount = expressAsyncHandler(async (req, res) => {
+  //Get the id of the post
+  const { id } = req.params;
+  //get the login user
+  const userId = req.userAuth._id;
+  //Find the post
+  const post = await Post.findById(id);
+  if (!post) {
+    throw new Error("Post not found");
+  }
+  //Push thr user into post likes
+
+  await Post.findByIdAndUpdate(
+    id,
+    {
+      $addToSet: { postViews: userId },
+    },
+    { new: true }
+  );
+  await post.save();
+  res.status(200).json({ message: "Post liked successfully.", post });
 });
