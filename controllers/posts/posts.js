@@ -239,7 +239,7 @@ exports.disLikePost = expressAsyncHandler(async (req, res) => {
   res.status(200).json({ message: "Post disliked successfully.", post });
 });
 
-//@desc   clapong a Post
+//@desc   claping a Post
 //@route  PUT /api/v1/posts/claps/:id
 //@access Private
 
@@ -252,10 +252,35 @@ exports.claps = expressAsyncHandler(async (req, res) => {
     throw new Error("Post not found");
   }
   //implement the claps
-  const updatedPost = await Post.findOneAndUpdate(
+  const updatedPost = await Post.findByIdAndUpdate(
     id,
     {
       $inc: { claps: 1 },
+    },
+    {
+      new: true,
+    }
+  );
+  res.status(200).json({ message: "Post clapped successfully.", updatedPost });
+});
+
+//@desc   claping a Post
+//@route  PUT /api/v1/posts/claps/:id
+//@access Private
+
+exports.postViews = expressAsyncHandler(async (req, res) => {
+  //Get the id of the post
+  const { id } = req.params;
+  //Find the post
+  const post = await Post.findById(id);
+  if (!post) {
+    throw new Error("Post not found");
+  }
+  //implement the claps
+  const updatedPost = await Post.findByIdAndUpdate(
+    id,
+    {
+      $inc: { postViews: 1 },
     },
     {
       new: true,
