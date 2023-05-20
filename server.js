@@ -1,4 +1,5 @@
 const dotenv = require("dotenv");
+const cors = require("cors");
 dotenv.config();
 const http = require("http");
 const express = require("express");
@@ -15,9 +16,10 @@ require("./config/database")();
 //sendEmail("inovodev@gmail.com", "Some message");
 //!Server
 const app = express();
-console.log(process.env.MYKEY);
 //middlewares
 app.use(express.json()); //Pass incoming data
+//cors middleware
+app.use(cors());
 // Routes
 app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/categories", categoryRouter);

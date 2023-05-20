@@ -77,11 +77,13 @@ exports.getPosts = asyncHandler(async (req, res) => {
       },
     ],
   };
-  const posts = await Post.find(query).populate({
-    path: "author",
-    model: "User",
-    select: "email role username",
-  });
+  const posts = await Post.find(query)
+    .populate({
+      path: "author",
+      model: "User",
+      select: "email role username",
+    })
+    .populate("category");
   res.status(201).json({
     status: "success",
     message: "Posts successfully fetched",
@@ -93,7 +95,9 @@ exports.getPosts = asyncHandler(async (req, res) => {
 //@route GET /api/v1/posts/:id
 //@access PUBLIC
 exports.getPost = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.id);
+  const post = await Post.findById(req.params.id)
+    .populate("author")
+    .populate("category");
   res.status(201).json({
     status: "success",
     message: "Post successfully fetched",
@@ -106,6 +110,15 @@ exports.getPost = asyncHandler(async (req, res) => {
 //@access Private
 
 exports.deletePost = asyncHandler(async (req, res) => {
+  //! Find the post
+  const postFound = await Post.findById(req.params.id);
+  const isAuthor =
+    req.userAuth?._id?.toString() === postFound?.author?._id?.toString();
+  console.log(isAuthor);
+
+  if (!isAuthor) {
+    throw new Error("Action denied, you are not the creator of this post");
+  }
   await Post.findByIdAndDelete(req.params.id);
   res.status(201).json({
     status: "success",
@@ -118,10 +131,27 @@ exports.deletePost = asyncHandler(async (req, res) => {
 //@access Private
 
 exports.updatePost = asyncHandler(async (req, res) => {
-  const post = await Post.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  //!Check if the post exists
+  const { id } = req.params;
+  const postFound = await Post.findById(id);
+  if (!postFound) {
+    throw new Error("Post not found");
+  }
+  //! image update
+  const { title, category, content } = req.body;
+  const post = await Post.findByIdAndUpdate(
+    id,
+    {
+      image: req?.file?.path ? req?.file?.path : postFound?.image,
+      title: title ? title : postFound?.title,
+      category: category ? category : postFound?.category,
+      content: content ? content : postFound?.content,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
   res.status(201).json({
     status: "success",
     message: "post successfully updated",
@@ -134,7 +164,10 @@ exports.updatePost = asyncHandler(async (req, res) => {
 //@access PUBLIC
 
 exports.getPublicPosts = asyncHandler(async (req, res) => {
-  const posts = await Post.find({}).sort({ createdAt: -1 }).limit(4);
+  const posts = await Post.find({})
+    .sort({ createdAt: -1 })
+    .limit(4)
+    .populate("category");
   res.status(201).json({
     status: "success",
     message: "Posts successfully fetched",
@@ -219,7 +252,7 @@ exports.claps = expressAsyncHandler(async (req, res) => {
     throw new Error("Post not found");
   }
   //implement the claps
-  await Post.findOneAndUpdate(
+  const updatedPost = await Post.findByIdAndUpdate(
     id,
     {
       $inc: { claps: 1 },
@@ -228,7 +261,7 @@ exports.claps = expressAsyncHandler(async (req, res) => {
       new: true,
     }
   );
-  res.status(200).json({ message: "Post clapped successfully.", post });
+  res.status(200).json({ message: "Post clapped successfully.", updatedPost });
 });
 
 //@desc   Shedule a post
@@ -266,4 +299,31 @@ exports.schedule = expressAsyncHandler(async (req, res) => {
     message: "Post scheduled successfully",
     post,
   });
+});
+
+//@desc   post  view counta
+//@route  PUT /api/v1/posts/:id/post-views-count
+//@access Private
+
+exports.postViewCount = expressAsyncHandler(async (req, res) => {
+  //Get the id of the post
+  const { id } = req.params;
+  //get the login user
+  const userId = req.userAuth._id;
+  //Find the post
+  const post = await Post.findById(id);
+  if (!post) {
+    throw new Error("Post not found");
+  }
+  //Push thr user into post likes
+
+  await Post.findByIdAndUpdate(
+    id,
+    {
+      $addToSet: { postViews: userId },
+    },
+    { new: true }
+  );
+  await post.save();
+  res.status(200).json({ message: "Post liked successfully.", post });
 });

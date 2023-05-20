@@ -28,10 +28,14 @@ const postSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    postViews: {
-      type: Number,
-      default: 0,
-    },
+
+    postViews: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
     category: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
