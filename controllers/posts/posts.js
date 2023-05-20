@@ -252,7 +252,7 @@ exports.claps = expressAsyncHandler(async (req, res) => {
     throw new Error("Post not found");
   }
   //implement the claps
-  await Post.findOneAndUpdate(
+  const updatedPost = await Post.findOneAndUpdate(
     id,
     {
       $inc: { claps: 1 },
@@ -261,7 +261,7 @@ exports.claps = expressAsyncHandler(async (req, res) => {
       new: true,
     }
   );
-  res.status(200).json({ message: "Post clapped successfully.", post });
+  res.status(200).json({ message: "Post clapped successfully.", updatedPost });
 });
 
 //@desc   Shedule a post
