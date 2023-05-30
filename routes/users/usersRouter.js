@@ -14,10 +14,10 @@ const {
   forgotpassword,
   accountVerificationEmail,
   verifyAccount,
-  getPublicProfile,
 } = require("../../controllers/users/usersCtrl");
 const isLoggin = require("../../middlewares/isLoggin");
 const storage = require("../../utils/fileUpload");
+const { getPublicProfile } = require("../../controllers/users/usersCtrl");
 
 const usersRouter = express.Router();
 
@@ -28,10 +28,11 @@ const upload = multer({ storage });
 usersRouter.post("/register", register);
 // login
 usersRouter.post("/login", login);
-// profile
-usersRouter.get("/profile/", isLoggin, getProfile);
 // public profile
 usersRouter.get("/public-profile/:userId", getPublicProfile);
+// profile
+usersRouter.get("/profile/", isLoggin, getProfile);
+
 // block user
 usersRouter.put("/block/:userIdToBlock", isLoggin, blockUser);
 // ublock user
