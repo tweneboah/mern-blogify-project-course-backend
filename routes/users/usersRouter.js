@@ -14,6 +14,8 @@ const {
   forgotpassword,
   accountVerificationEmail,
   verifyAccount,
+  uploadeProfilePicture,
+  uploadeCoverImage,
 } = require("../../controllers/users/usersCtrl");
 const isLoggin = require("../../middlewares/isLoggin");
 const storage = require("../../utils/fileUpload");
@@ -28,6 +30,21 @@ const upload = multer({ storage });
 usersRouter.post("/register", register);
 // login
 usersRouter.post("/login", login);
+
+// upload profile image
+usersRouter.put(
+  "/upload-profile-image",
+  isLoggin,
+  upload.single("file"),
+  uploadeProfilePicture
+);
+// upload profile image
+usersRouter.put(
+  "/upload-cover-image",
+  isLoggin,
+  upload.single("file"),
+  uploadeCoverImage
+);
 // public profile
 usersRouter.get("/public-profile/:userId", getPublicProfile);
 // profile
