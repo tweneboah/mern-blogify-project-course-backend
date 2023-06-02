@@ -8,6 +8,14 @@ const expressAsyncHandler = require("express-async-handler");
 //@access Private
 
 exports.createPost = asyncHandler(async (req, res) => {
+  //! Find the user/chec if user account is verified
+  const userFound = await User.findById(req.userAuth._id);
+  if (!userFound) {
+    throw new Error("User Not found");
+  }
+  if (!userFound?.isVerified) {
+    throw new Error("Action denied, your account is not verified");
+  }
   //Get the payload
   const { title, content, categoryId } = req.body;
   //chech if post exists
