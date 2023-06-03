@@ -68,6 +68,7 @@ exports.login = asyncHandler(async (req, res) => {
     role: user?.role,
     token: generateToken(user),
     profilePicture: user?.profilePicture,
+    isVerified: user?.isVerified,
   });
 });
 
@@ -454,5 +455,36 @@ exports.uploadeCoverImage = asyncHandler(async (req, res) => {
     status: "scuccess",
     message: "User cover image updated Succesfully",
     user,
+  });
+});
+
+//@desc   Update username/email
+//@route  PUT /api/v1/users/update-profile
+//@access Private
+
+exports.updateUserProfile = asyncHandler(async (req, res) => {
+  //!Check if the post exists
+  const userId = req.userAuth?._id;
+  const userFound = await User.findById(userId);
+  if (!userFound) {
+    throw new Error("User not found");
+  }
+  //! image update
+  const { username, email } = req.body;
+  const post = await User.findByIdAndUpdate(
+    userId,
+    {
+      email: email ? email : userFound?.email,
+      username: username ? username : userFound?.username,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+  res.status(201).json({
+    status: "success",
+    message: "User successfully updated",
+    post,
   });
 });

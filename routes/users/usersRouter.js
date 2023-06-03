@@ -16,6 +16,7 @@ const {
   verifyAccount,
   uploadeProfilePicture,
   uploadeCoverImage,
+  updateUserProfile,
 } = require("../../controllers/users/usersCtrl");
 const isLoggin = require("../../middlewares/isLoggin");
 const storage = require("../../utils/fileUpload");
@@ -49,6 +50,8 @@ usersRouter.put(
 usersRouter.get("/public-profile/:userId", getPublicProfile);
 // profile
 usersRouter.get("/profile/", isLoggin, getProfile);
+//!  update profile
+usersRouter.put("/update-profile/", isLoggin, updateUserProfile);
 
 // block user
 usersRouter.put("/block/:userIdToBlock", isLoggin, blockUser);
@@ -65,7 +68,7 @@ usersRouter.put(
 );
 
 // send account verification email
-usersRouter.put("/account-verification/:verifyToken", isLoggin, verifyAccount);
+usersRouter.get("/account-verification/:verifyToken", isLoggin, verifyAccount);
 
 // forgot password user
 usersRouter.post("/forgot-password", forgotpassword);
