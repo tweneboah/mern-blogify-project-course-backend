@@ -469,6 +469,7 @@ exports.updateUserProfile = asyncHandler(async (req, res) => {
   if (!userFound) {
     throw new Error("User not found");
   }
+  console.log(userFound);
   //! image update
   const { username, email } = req.body;
   const post = await User.findByIdAndUpdate(
