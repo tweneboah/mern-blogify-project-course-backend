@@ -14,6 +14,7 @@ const sendAccVerificationEmail = async (to, resetToken) => {
         pass: process.env.GMAIL_PASS,
       },
     });
+    console.log(to);
     //create msg
     const message = {
       to,
