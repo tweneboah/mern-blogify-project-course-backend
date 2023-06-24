@@ -13,9 +13,9 @@ exports.createPost = asyncHandler(async (req, res) => {
   if (!userFound) {
     throw new Error("User Not found");
   }
-  if (!userFound?.isVerified) {
-    throw new Error("Action denied, your account is not verified");
-  }
+  // if (!userFound?.isVerified) {
+  //   throw new Error("Action denied, your account is not verified");
+  // }
   //Get the payload
   const { title, content, categoryId } = req.body;
   //chech if post exists
