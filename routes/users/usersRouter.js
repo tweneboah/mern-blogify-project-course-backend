@@ -14,9 +14,13 @@ const {
   forgotpassword,
   accountVerificationEmail,
   verifyAccount,
+  uploadeProfilePicture,
+  uploadeCoverImage,
+  updateUserProfile,
 } = require("../../controllers/users/usersCtrl");
 const isLoggin = require("../../middlewares/isLoggin");
 const storage = require("../../utils/fileUpload");
+const { getPublicProfile } = require("../../controllers/users/usersCtrl");
 
 const usersRouter = express.Router();
 
@@ -27,8 +31,28 @@ const upload = multer({ storage });
 usersRouter.post("/register", register);
 // login
 usersRouter.post("/login", login);
+
+// upload profile image
+usersRouter.put(
+  "/upload-profile-image",
+  isLoggin,
+  upload.single("file"),
+  uploadeProfilePicture
+);
+// upload profile image
+usersRouter.put(
+  "/upload-cover-image",
+  isLoggin,
+  upload.single("file"),
+  uploadeCoverImage
+);
+// public profile
+usersRouter.get("/public-profile/:userId", getPublicProfile);
 // profile
 usersRouter.get("/profile/", isLoggin, getProfile);
+//!  update profile
+usersRouter.put("/update-profile/", isLoggin, updateUserProfile);
+
 // block user
 usersRouter.put("/block/:userIdToBlock", isLoggin, blockUser);
 // ublock user
@@ -44,7 +68,7 @@ usersRouter.put(
 );
 
 // send account verification email
-usersRouter.put("/account-verification/:verifyToken", isLoggin, verifyAccount);
+usersRouter.get("/account-verification/:verifyToken", isLoggin, verifyAccount);
 
 // forgot password user
 usersRouter.post("/forgot-password", forgotpassword);

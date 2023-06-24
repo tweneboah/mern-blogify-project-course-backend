@@ -8,6 +8,14 @@ const expressAsyncHandler = require("express-async-handler");
 //@access Private
 
 exports.createPost = asyncHandler(async (req, res) => {
+  //! Find the user/chec if user account is verified
+  const userFound = await User.findById(req.userAuth._id);
+  if (!userFound) {
+    throw new Error("User Not found");
+  }
+  if (!userFound?.isVerified) {
+    throw new Error("Action denied, your account is not verified");
+  }
   //Get the payload
   const { title, content, categoryId } = req.body;
   //chech if post exists
@@ -66,9 +74,11 @@ exports.getPosts = asyncHandler(async (req, res) => {
   });
   // Extract the IDs of users who have blocked the logged-in user
   const blockingUsersIds = usersBlockingLoggedInuser?.map((user) => user?._id);
-
+  //! Get the category, searchterm from request
+  const category = req.query.category;
+  const searchTerm = req.query.searchTerm;
   //query
-  const query = {
+  let query = {
     author: { $nin: blockingUsersIds },
     $or: [
       {
@@ -77,16 +87,50 @@ exports.getPosts = asyncHandler(async (req, res) => {
       },
     ],
   };
+  //! check if category/searchterm is specified, then add to the query
+  if (category) {
+    query.category = category;
+  }
+  if (searchTerm) {
+    query.title = { $regex: searchTerm, $options: "i" };
+  }
+  //Pagination parameters from request
+
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 5;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const total = await Post.countDocuments(query);
+
   const posts = await Post.find(query)
     .populate({
       path: "author",
       model: "User",
       select: "email role username",
     })
-    .populate("category");
+    .populate("category")
+    .skip(startIndex)
+    .limit(limit);
+  // Pagination result
+  const pagination = {};
+  if (endIndex < total) {
+    pagination.next = {
+      page: page + 1,
+      limit,
+    };
+  }
+
+  if (startIndex > 0) {
+    pagination.prev = {
+      page: page - 1,
+      limit,
+    };
+  }
+
   res.status(201).json({
     status: "success",
     message: "Posts successfully fetched",
+    pagination,
     posts,
   });
 });
@@ -97,7 +141,15 @@ exports.getPosts = asyncHandler(async (req, res) => {
 exports.getPost = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id)
     .populate("author")
-    .populate("category");
+    .populate("category")
+    .populate({
+      path: "comments",
+      model: "Comment",
+      populate: {
+        path: "author",
+        select: "username",
+      },
+    });
   res.status(201).json({
     status: "success",
     message: "Post successfully fetched",
@@ -323,7 +375,7 @@ exports.postViewCount = expressAsyncHandler(async (req, res) => {
       $addToSet: { postViews: userId },
     },
     { new: true }
-  );
+  ).populate("author");
   await post.save();
   res.status(200).json({ message: "Post liked successfully.", post });
 });
