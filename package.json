@@ -1,11 +1,12 @@
 {
-  "name": "mern-blog-project-course-backend",
+  "name": "mern-blog-project-course-backend..",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "build": "npm run build"
   },
   "keywords": [],
   "author": "",
