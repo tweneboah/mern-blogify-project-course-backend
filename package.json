@@ -5,8 +5,10 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "server": "nodemon server.js",
-    "build": "npm run build"
+    "server": "nodemon server.js"
+  },
+  "engines": {
+    "node": "v16.20.1"
   },
   "keywords": [],
   "author": "",
