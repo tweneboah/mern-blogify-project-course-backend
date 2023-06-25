@@ -110,7 +110,8 @@ exports.getPosts = asyncHandler(async (req, res) => {
     })
     .populate("category")
     .skip(startIndex)
-    .limit(limit);
+    .limit(limit)
+    .sort({ createdAt: -1 });
   // Pagination result
   const pagination = {};
   if (endIndex < total) {
@@ -149,8 +150,8 @@ exports.getPost = asyncHandler(async (req, res) => {
         path: "author",
         select: "username",
       },
-    })
-    .sort({ createdAt: -1 });
+    });
+
   res.status(201).json({
     status: "success",
     message: "Post successfully fetched",
