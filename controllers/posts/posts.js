@@ -149,7 +149,8 @@ exports.getPost = asyncHandler(async (req, res) => {
         path: "author",
         select: "username",
       },
-    });
+    })
+    .sort({ createdAt: -1 });
   res.status(201).json({
     status: "success",
     message: "Post successfully fetched",
