@@ -4,7 +4,7 @@
 
 Welcome to 'The MERN Stack Blogify Project: Full Web Development Unleashed' - an exhaustive course aimed at making you a proficient full-stack developer. This course is meticulously designed to teach you how to create a feature-rich blogging platform from the ground up using MongoDB, Express.js, React.js, and Node.js (MERN).
 
-**Note:** This repository contains the backend codebase for the application. You can find the frontend repository [here](https://github.com/yourusername/blogify-frontend).
+**Note:** This repository contains the backend codebase for the application. You can find the frontend repository [here](https://github.com/tweneboah/mern-blogify-frontend).
 
 By working hands-on and integrating pivotal web application features using state-of-the-art technologies, you will gain practical knowledge about user authentication, file uploading, social features (following/unfollowing users), user blocking, post scheduling, and more.
 
@@ -74,7 +74,7 @@ Here are the steps to get the backend of the MERN Stack Blogify Project up and r
     Clone the backend repository from GitHub. 
 
     ```bash
-    git clone https://github.com/yourusername/blogify-backend.git
+    git clone [https://github.com/yourusername/blogify-backend.git](https://github.com/tweneboah/mern-blogify-project-course-backend)
     ```
 
 2. **Install the Dependencies**
@@ -91,7 +91,7 @@ Here are the steps to get the backend of the MERN Stack Blogify Project up and r
     Create a new file named `.env` in the root directory and set up your environment variables. For example:
 
     ```bash
-    PORT=5000
+    PORT=9080
     MONGO_URI=your_mongodb_uri
     JWT_SECRET=your_jwt_secret
     ```
